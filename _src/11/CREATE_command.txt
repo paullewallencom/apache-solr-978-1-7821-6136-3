@@ -1,0 +1,2 @@
+# create a new core called karaoke_test
+http://localhost:8983/solr/admin/cores?action=CREATE&name=karaoke_test&instanceDir=karaoke&config=solrconfig.xml&schema=schema.xml&dataDir=./examples/cores_data/karaoke_test

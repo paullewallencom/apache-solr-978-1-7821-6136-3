@@ -1,0 +1,7 @@
+a_name
+a_type
+type
+id
+a_begin_date
+a_end_date
+a_member_name

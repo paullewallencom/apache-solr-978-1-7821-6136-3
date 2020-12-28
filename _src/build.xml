@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ======================================================================= -->
+<!-- Solr Book Examples                                                     -->
+<!-- ======================================================================= -->
+<project basedir="." default="usage" name="Solr Enterprise Search Server">
+  <property name="examples.dir" value="."/>
+  <property name="examples.cores_data.dir" value="${examples.dir}/cores_data"/>
+  <property name="temp.dir" value="${java.io.tmpdir}/solrbook"/>
+  <property name="urlbase" value="ftp://ftp.musicbrainz.org/pub/musicbrainz/books/Solr_1.4_Enterprise_Search_Server/" />
+  <!-- downloaded zips go there but are decompressed to download.dir -->
+  <property name="download.dir" location="${examples.dir}/downloads"/>
+
+  <available property="mbartists.available" file="${download.dir}/mb_artists.solr.xml"/>
+  <available property="mbreleases.available" file="${download.dir}/mb_releases.csv"/>
+  <available property="mbtracks.available" file="${download.dir}/mb_tracks.csv"/>
+
+  <!-- ## INITIALIZATION ## -->
+
+  <mkdir dir="${temp.dir}"/>
+
+  <!-- ## TARGETS ## -->
+
+  <!-- Default target: usage.  Prints out instructions. -->
+  <target name="usage" description="Prints out instructions">
+    <echo message="Welcome to the Solr Enterprise Search Server Examples!"/>
+    <echo message=" Use 'ant index' to download and index all the MusicBrainz data."/>
+    <echo message=" Use 'ant index:mbartists' to download and index just the mbartists.  Quickest to run."/>
+    <echo message=" Use 'ant index:mbreleases' to download and index just the mbreleases."/>
+    <echo message=" Use 'ant index:mbtracks' to download and index just the mbtracks.  Very big!"/>
+
+    <echo message=" Run either run.sh or run.bat to start Solr."/>
+    <echo message="   Warning: Indexing may fail if the current path has a space in it."/>
+
+  </target>
+
+  <target name="index"
+          description="Download and indexes the MusicBrainz data into cores_data">
+
+    <antcall>
+      <target name="index:mbartists"/>
+      <target name="index:mbreleases"/>
+      <target name="index:mbtracks"/>
+    </antcall>
+
+  </target>
+
+  <target name="start:solr" depends="detect:solr" unless="solr.running">
+    <!-- Bit of an advanced Ant trick here; we're spawning Solr off in a separate process but not blocking Ant for
+     Solr to "finish" (it's a server and doesn't stop unless told). It's killed when Ant ultimately finishes.
+    -->
+    <echo>
+!! HEY, READ THIS: Solr is going to start in a separate process. 
+
+This script will wait up to 30 seconds for a successful start and then proceed to tell Solr to index data.
+
+After indexing Solr will quit.
+
+Indexing may fail if the current path has a space in it.
+    </echo>
+    <sleep seconds="2"/>
+    <parallel>
+      <daemons>
+        <java fork="true" maxmemory="500M" jar="${examples.dir}/solr/start.jar" failonerror="true" dir="${examples.dir}">
+          <sysproperty key="file.encoding" value="UTF8"/>
+          <sysproperty key="solr.solr.home" value="cores"/>
+          <sysproperty key="jetty.home" value="solr"/>
+          <sysproperty key="jetty.logs" value="solr/logs"/>
+        </java>
+      </daemons>
+    </parallel>
+    
+    <waitfor maxwait="30" maxwaitunit="second" checkevery="500" timeoutproperty="solr.failed">
+      <http url="http://localhost:8983/solr/"/>
+    </waitfor>
+    
+    <fail if="solr.failed">
+      Solr did not properly start, probably due to a configuration error.  
+      
+      Start Solr by hand and go to http://localhost:8983/solr to see the configuration error.
+    </fail>
+  </target>
+  
+  <!-- This target attempts to see if Solr is running -->
+  <target name="detect:solr">
+    <condition property="solr.running">
+      <http url="http://localhost:8983/solr"/>      
+    </condition>
+  </target>
+
+  <!-- Indexing notes:
+  1. The "get" task is used here to give files to Solr for indexing because it's built into ant and we're using ant
+  here. It's not an ideal situation; it doesn't support posting form values like curl can. The urls are long.
+  2. stream.file value in url (a file path) is not url encoded! Should warn user about spaces in path.
+  -->
+
+  <target name="download:mbtracks" description="Download MB tracks data"
+          unless="mbtracks.available">
+    <get src="${urlbase}mb_tracks.csv.zip"
+         dest="${temp.dir}/mb_tracks.csv.zip"/>
+
+    <unzip src="${temp.dir}/mb_tracks.csv.zip" dest="${download.dir}"/>
+    <delete file="${temp.dir}/mb_tracks.csv.zip"/>
+  </target>
+
+  <target name="index:mbtracks" depends="start:solr,download:mbtracks" description="Downloads then indexes MB tracks">
+    <echo message="Indexing tracks. This might take 30 minutes on a slow machine!"/>
+    <sleep seconds="1"/>
+    <get
+        src="http://localhost:8983/solr/mbtracks/update?stream.body=%3Cdelete%3E%3Cquery%3E*:*%3C/query%3E%3C/delete%3E&amp;commit=true&amp;optimize=true"
+        dest="logs/delete_mbtracks_solr_response.txt"
+        />    
+    <get
+        src="http://localhost:8983/solr/mbtracks/update?update.contentType=text/csv&amp;f.t_r_attributes.split=true&amp;f.t_r_attributes.separator=%20&amp;overwrite=false&amp;stream.file=${download.dir}/mb_tracks.csv&amp;commit=true;&amp;optimize=true&amp;update.chain=script"
+        dest="logs/index_mbtracks_solr_response.txt"
+        />
+    <sleep seconds="5"/>
+  </target>
+
+  <target name="download:mbreleases" description="Download MB releases data"
+          unless="mbreleases.available">
+    <get src="${urlbase}mb_releases.csv.zip"
+         dest="${temp.dir}/mb_releases.csv.zip"/>
+
+    <unzip src="${temp.dir}/mb_releases.csv.zip" dest="${download.dir}"/>
+    <delete file="${temp.dir}/mb_releases.csv.zip"/>
+  </target>
+
+  <target name="index:mbreleases" depends="start:solr,download:mbreleases"
+          description="Downloads then indexes MB releases">
+    <echo message="Indexing releases. This might take up to 10 minutes."/>
+    <sleep seconds="1"/>
+    <get
+        src="http://localhost:8983/solr/mbreleases/update?stream.body=%3Cdelete%3E%3Cquery%3E*:*%3C/query%3E%3C/delete%3E&amp;commit=true&amp;optimize=true"
+        dest="logs/delete_mbreleases_solr_response.txt"
+        />    
+    <get
+        src="http://localhost:8983/solr/mbreleases/update?update.contentType=text/csv&amp;f.r_attributes.split=true&amp;f.r_attributes.separator=%20&amp;f.r_event_country.split=true&amp;f.r_event_country.separator=%20&amp;f.r_event_date.split=true&amp;f.r_event_date.separator=%20&amp;overwrite=false&amp;stream.file=${download.dir}/mb_releases.csv&amp;commit=true;&amp;optimize=true&amp;update.chain=script"
+        dest="logs/index_mbreleases_solr_response.txt"
+        />
+    <sleep seconds="5"/>
+  </target>
+
+  <target name="download:mbartists" description="Download MB artists data"
+          unless="mbartists.available">
+    <get src="${urlbase}mb_artists.solr.xml.zip"
+         dest="${temp.dir}/mb_artists.solr.xml.zip"/>
+
+    <unzip src="${temp.dir}/mb_artists.solr.xml.zip" dest="${download.dir}"/>
+    <!-- correct naming convention glitch "mb_" -->
+    <move file="${download.dir}/artists.solr.xml" tofile="${download.dir}/mb_artists.solr.xml" />
+    <delete file="${temp.dir}/mb_artists.solr.xml.zip"/>
+  </target>
+
+  <target name="index:mbartists" depends="start:solr,download:mbartists"
+          description="Downloads then indexes MB artists">
+    <echo message="Indexing artists. This might take over 5 minutes."/>
+    <sleep seconds="1"/>
+    <get
+        src="http://localhost:8983/solr/mbartists/update?stream.body=%3Cdelete%3E%3Cquery%3E*:*%3C/query%3E%3C/delete%3E&amp;commit=true&amp;optimize=true"
+        dest="logs/delete_mbartists_solr_response.txt"
+        />    
+    <get
+        src="http://localhost:8983/solr/mbartists/update?overwrite=false&amp;stream.file=${download.dir}/mb_artists.solr.xml&amp;commit=true&amp;optimize=true&amp;update.chain=script"
+        dest="logs/index_mbartists_solr_response.txt"
+        />
+    <sleep seconds="5"/>
+  </target>
+</project>

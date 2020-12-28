@@ -1,0 +1,9 @@
+<dataConfig>
+   <dataSource name="artists" type="FileDataSource" encoding="UTF-8"/>
+   <document name="artists">
+       <entity name="artist" dataSource="artists" processor="XPathEntityProcessor"
+          forEach="/wrap/table/tr" url="downloads/artists_veryshort.xml" xsl="cores/mbtype/conf/xslt/artists.xsl" useSolrAddSchema="true">
+       </entity>
+   </document>
+</dataConfig>
+

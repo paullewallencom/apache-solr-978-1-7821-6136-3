@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    OpenSearch description file. Based on patch SOLR-2143.
+-->
+<OpenSearchDescription 
+  xmlns="http://a9.com/-/spec/opensearch/1.1/"
+  xmlns:suggestions="http://www.opensearch.org/specifications/opensearch/extensions/suggestions/1.1">
+    <ShortName>Search MBArtists</ShortName>
+    <Description>Search MusicBrainz Artist information</Description>
+    <Tags>search MusicBrainz</Tags>
+    <Contact>admin@localdomain</Contact>
+    <Url type="application/atom+xml"
+        rel="results"
+        template="http://localhost:8983/solr/mbartists/select?q={searchTerms}&amp;wt=xslt&amp;tr=opensearch_atom.xsl&amp;start={startPage?}&amp;rows={itemsPerPage?}" />
+    <Url type="application/x-suggestions+json"
+        rel="suggestions"
+        template="http://localhost:8983/solr/mbartists/termsSuggest?wt=xslt&amp;tr=opensearch_suggestions_json.xsl&amp;terms.prefix={searchTerms}&amp;q={searchTerms}&amp;echoParams=explicit"/>        
+    <Url type="text/html"
+        template="http://localhost:8983/solr/mbartists/browse?q={searchTerms}&amp;start={startPage?}&amp;rows={itemsPerPage?}&amp;prefix={suggestions:suggestionPrefix?}&amp;index={suggestions:suggestionIndex?}" />
+    <LongName>Search MusicBrainz Artist Data with Solr</LongName>
+    <Image height="64" width="64" type="image/png">
+        http://solrenterprisesearchserver.s3.amazonaws.com/images/mb-banner_med.png
+    </Image>
+    <Image height="16" width="16" type="image/png">
+        http://solrenterprisesearchserver.s3.amazonaws.com/images/musicbrainz.png
+    </Image>
+    <Query role="example" searchTerms="smashing" />
+    <Developer>Solr/Lucene Development Community</Developer>
+    <Attribution>
+        Based on SOLR-2143.   Data from MusicBrainz.
+   </Attribution>
+    <SyndicationRight>open</SyndicationRight>
+    <AdultContent>false</AdultContent>
+    <Language>en-us</Language>
+    <OutputEncoding>UTF-8</OutputEncoding>
+    <InputEncoding>UTF-8</InputEncoding>
+</OpenSearchDescription>

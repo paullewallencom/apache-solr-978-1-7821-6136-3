@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <title>MyFaves: <%= controller.action_name %></title>
+  <%= stylesheet_link_tag 'scaffold' %>
+  <script type="text/javascript" src="http://view.jquery.com/trunk/plugins/autocomplete/lib/jquery.js"></script>
+  <script type='text/javascript' src='http://view.jquery.com/trunk/plugins/autocomplete/lib/jquery.bgiframe.min.js'></script>
+  <script type='text/javascript' src='http://view.jquery.com/trunk/plugins/autocomplete/lib/jquery.ajaxQueue.js'></script>
+  <script type='text/javascript' src='http://view.jquery.com/trunk/plugins/autocomplete/jquery.autocomplete.js'></script>
+
+  <link rel="stylesheet" type="text/css" href="http://view.jquery.com/trunk/plugins/autocomplete/demo/main.css" />
+  <%= stylesheet_link_tag 'jquery.autocomplete' %>
+  
+
+
+</head>
+<body>
+
+<p style="color: green"><%= flash[:notice] %></p>
+
+<%= yield  %>
+
+
+</body>
+</html>

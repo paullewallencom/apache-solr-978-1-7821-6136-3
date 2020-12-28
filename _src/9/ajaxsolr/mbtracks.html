@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Browse MusicBrainz Tracks Data via AJAX Solr</title>
+    <!-- MusicBrainz Deltas:
+    Newer JQuery (includes autocomplete).
+    Added custom AbstractTermWidget.js for term faceting using facet.prefix.
+    Commented out search filter (CurrentSearchWidget) because this demo doesn't use it, and it would require some modification for
+    property "q" integration with the search query, vs "fq" in the Reuters demo.
+    -->
+    <link rel="stylesheet" type="text/css" href="reuters/css/reuters.css" media="screen" />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <script type="text/javascript" src="lib/core/Core.js"></script>
+    <script type="text/javascript" src="lib/core/AbstractManager.js"></script>
+    <script type="text/javascript" src="lib/managers/Manager.jquery.js"></script>
+    <script type="text/javascript" src="lib/core/Parameter.js"></script>
+    <script type="text/javascript" src="lib/core/ParameterStore.js"></script>
+    <script type="text/javascript" src="lib/core/AbstractWidget.js"></script>
+    <script type="text/javascript" src="mbtracks/widgets/ResultWidget.js"></script>
+    <script type="text/javascript" src="lib/helpers/jquery/ajaxsolr.theme.js"></script>
+    <script type="text/javascript" src="mbtracks/js/mbtracks.theme.js"></script>
+    <script type="text/javascript" src="reuters/js/jquery.livequery.js"></script>
+    <script type="text/javascript" src="lib/widgets/jquery/PagerWidget.js"></script>
+    <script type="text/javascript" src="lib/core/AbstractFacetWidget.js"></script>
+    <script type="text/javascript" src="reuters/widgets/CurrentSearchWidget.js"></script>
+    <link rel="stylesheet" type="text/css" href="reuters/ext/jquery.autocomplete.css" media="screen" />
+    <script type="text/javascript" src="lib/core/AbstractTextWidget.js"></script>
+    <script type="text/javascript" src="mbtracks/widgets/AutocompleteTermWidget.js"></script>
+    <script type="text/javascript" src="lib/helpers/ajaxsolr.support.js"></script>
+    <script type="text/javascript" src="lib/helpers/ajaxsolr.theme.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="reuters/ext/smoothness/jquery-ui.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="reuters/ext/smoothness/ui.theme.css" media="screen" />
+
+
+    <script>
+      var Manager;
+
+      (function ($) {
+
+        $(function () {
+          Manager = new AjaxSolr.Manager({
+            solrUrl: 'http://localhost:8983/solr/mbtracks/'
+          });
+          
+          Manager.addWidget(new AjaxSolr.ResultWidget({
+            id: 'result',
+            target: '#docs'
+          }));
+          
+          Manager.addWidget(new AjaxSolr.PagerWidget({
+            id: 'pager',
+            target: '#pager',
+            prevLabel: '&lt;',
+            nextLabel: '&gt;',
+            innerWindow: 1,
+            renderHeader: function (perPage, offset, total) {
+              $('#pager-header').html($('<span/>').text('displaying ' + Math.min(total, offset + 1) + ' to ' + Math.min(total, offset + perPage) + ' of ' + total));
+            }
+          }));
+          
+          // Manager.addWidget(new AjaxSolr.CurrentSearchWidget({
+          //   id: 'currentsearch',
+          //   target: '#selection'
+          // }));
+          
+          //This one was customized to work based on facet.prefix
+          Manager.addWidget(new AjaxSolr.AutocompleteTermWidget({
+            id: 'text',
+            target: '#search',
+            field: 't_name',
+          }));
+
+          Manager.init();
+          //DWS: I wish we defined this request handler with a leading '/' so we could set Manager.servlet instead.
+          Manager.store.addByValue('qt', 'mb_tracks');
+          Manager.store.addByValue('echoParams', 'explicit');//required by the pager widget.
+          var params = {
+            facet: true,
+            'facet.field': [ 'type'],
+            'facet.limit': 20,
+            'facet.mincount': 1,
+            'json.nl': 'map'
+          };
+          for (var name in params) {
+            Manager.store.addByValue(name, params[name]);
+          }
+          Manager.doRequest();
+        });
+      
+        $.fn.showIf = function (condition) {
+          if (condition) {
+            return this.show();
+          }
+          else {
+            return this.hide();
+          }
+        }
+
+      })(jQuery);
+        
+  </script>
+    
+  </head>
+  <body>
+    <div id="wrap"> 
+      <div id="header">
+        <h1>Tracks</h1>
+        <h2>Browse MusicBrainz Tracks Data via AJAX Solr</h2>
+      </div>
+
+      <div class="right">
+        <div id="result">
+          <div id="navigation">
+            <ul id="pager"></ul>
+            <div id="pager-header"></div>
+          </div>
+          <div id="docs"></div>
+        </div>
+      </div>
+
+      <div class="left">
+        <!--
+        <h2>Current Selection</h2>
+        <ul id="selection"></ul>
+        -->
+        <h2>Search</h2>
+        <span id="search_help">(press ESC to close suggestions)</span>
+        <ul id="search">
+          <input type="text" id="query" name="query"/>
+        </ul>
+
+        <div class="clear"></div>
+      </div>
+      <div class="clear"></div>
+    </div>
+  </body>
+</html>

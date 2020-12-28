@@ -1,0 +1,38 @@
+<dataConfig>
+	<dataSource name="jdbc" driver="org.postgresql.Driver" url="jdbc:postgresql://localhost/musicbrainz_db" user="musicbrainz"
+		 batchSize="1000" readOnly="true" autoCommit="false" 
+		 transactionIsolation="TRANSACTION_READ_COMMITTED" holdability="CLOSE_CURSORS_AT_COMMIT"
+		/>
+	<document name="doc-a">
+		<entity name="artist" dataSource="jdbc" pk="id" query="
+				select
+			  a.id as id,
+			  a.name as a_name, a.sortname as a_name_sort,
+			  a.begindate as a_begin_date, a.enddate as a_end_date,
+			  a.type as a_type
+			  ,array_to_string(
+				 array(select aa.name from artistalias aa where aa.ref = a.id )
+				 , '|') as a_alias
+			  ,array_to_string(
+				 array(select am.name from v_artist_members am where am.band = a.id order by am.id)
+				 , '|') as a_member_name
+			  ,array_to_string(
+				 array(select am.id from v_artist_members am where am.band = a.id order by am.id)
+				 , '|') as a_member_id,
+				 (select re.releasedate from release re inner join album r on re.album = r.id where r.artist = a.id order by releasedate desc limit 1) as a_release_date_latest
+			  from artist a
+		  "
+				transformer="RegexTransformer,DateFormatTransformer,TemplateTransformer">
+			<field column = "id" template="Artist:${artist.id}" />
+			<!-- TODO add a_type; map 1 to person, 2 to group -->
+			<field column = "type" template="Artist" />
+			<field column = "a_begin_date" dateTimeFormat="yyyy-MM-dd" />
+			<field column = "a_end_date" dateTimeFormat="yyyy-MM-dd" />
+			<field column = "a_release_date_latest" dateTimeFormat="yyyy-MM-dd" />
+			<field column = "a_alias" splitBy="\|" />
+			<field column = "a_member_name" splitBy="\|"/>
+			<field column = "a_member_id" splitBy="\|" />
+		 </entity>
+	 </document>
+</dataConfig>
+

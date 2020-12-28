@@ -1,0 +1,31 @@
+<!-- Included into solrconfig.xml via XInclude. -->
+<!-- All caches are disabled, useful for testing raw query performance where caches would skew results -->
+<query>
+  <maxBooleanClauses>1024</maxBooleanClauses>
+  <filterCache
+    class="solr.FastLRUCache"
+    size="0"
+    initialSize="0"
+    autowarmCount="0"/>
+  <queryResultCache
+    class="solr.LRUCache"
+    size="0"
+    initialSize="0"
+    autowarmCount="0"/>
+
+  <documentCache
+    class="solr.LRUCache"
+    size="0"
+    initialSize="0"
+    autowarmCount="0"/>
+
+  <queryResultWindowSize>10</queryResultWindowSize>
+
+  <queryResultMaxDocsCached>0</queryResultMaxDocsCached>
+
+
+  <useColdSearcher>false</useColdSearcher>
+
+  <maxWarmingSearchers>2</maxWarmingSearchers>
+
+</query>

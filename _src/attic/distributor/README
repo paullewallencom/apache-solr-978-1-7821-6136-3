@@ -1,0 +1,16 @@
+Distributor is a software load balancer. Like other load balancers, it
+accepts connections and distributes them to an array of back end
+servers. Some of Distributor's more unique or advanced features:
+
+  * Integrated testing of back end servers
+  * Optional termination of client connections to misfunctioning
+    servers
+  * Online control of load balancer configuration
+  * Grouping of servers with rollover from group to group
+  * Two connection distribution methods: round robin and hashed based
+    on client IP address
+
+For more information, see the web site:  http://distributor.sourceforge.net/
+
+See INSTALL for installation instructions.
+

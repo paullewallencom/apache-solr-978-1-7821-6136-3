@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<html>
+  <head>
+    <meta name="stream_source_info" content="file"/>
+    <meta name="subject" content="Monte carlo condensed"/>
+    <meta name="Last-Modified" content="2002-03-03T20:55:09Z"/>
+    <meta name="Author" content="Andrew n.="/>
+    <meta name="xmpTPg:NPages" content="11"/>
+    <meta name="Creation-Date" content="2002-03-03T20:53:14Z"/>
+    <meta name="Keywords" content="ABBA"/>
+    <title>
+      Take A Chance On Me
+    </title>
+  </head>
+  <body>
+    <p>
+      "\n\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n
+    </p>
+    <div class="page">
+      \n\n
+      <p>
+        Take A Chance On MeMonte Carlo Condensed MatterA very brief guide to Monte Carlo simulation.An explanation of what I do.A chance for far too many ABBA puns.
+      </p>\n
+    </div>
+    <p>
+      \n
+    </p>
+    <div class="page">
+      \n\n
+      <p>
+        What's The Name Of The Game?Simulation:‘I have a dream, a fantasy,to help me through reality’Given some model many-body system.Simulate the evolution of the system.We can then measure various observables.Attempt to predict properties of real systems.Eg Equilibrium Properties All about knowing free-energies, phase behaviour, compressibility, specific heat,knowing M(E), knowing m.
+      </p>\n
+    </div>
+    <p>
+      \n
+    </p>
+    <div class="page">
+      \n\n
+      <p>
+        Monte Carlo MethodIn 1 Dimension:f(x)f(x)xabIn Two Dimensions:Can we do this for many-dimensionintegrations over phase space?
+      </p>\n
+    </div>
+    <p>
+      \n
+    </p>
+    <div class="page">
+      \n
+      <p>
+        Can you hear the drumsFERNANDO
+      </p>\n
+    </div>
+    <p>
+      \n
+    </p>
+    <div class="page">
+      \n\n
+      <p>
+        Monte Carlo In Statistical Mechanics:Eg In the canonical ensemble (Constant N, V, T).Generate microstates at random.Estimate energy using...g(E)This doesn't work!Eg Ising Model:Tend to generate ‘hot’ Low THigh Tconfigurations.energyCan we generate the right (high Boltzmann weight) configurations all the time, instead of waiting for them?Can we simulate, not just integrate?
+      </p>\n
+    </div>
+    <p>
+      \n
+    </p>
+    <div class="page">
+      \n\n
+      <p>
+        Markov Chains:timeOK, but we can’t accept all moves.How do we decide whether to accept a trial move?Convergence:equlibratemeasurement 1measurement 2measurement 3system evolving with timeCan show that microscopic reversibility (‘detailed balance’) is a sufficient condition to ensure convergence.We need an algorithm that satisfies this condition and will sample with the Boltzmann distribution.
+      </p>\n
+    </div>
+    <p>
+      \n
+    </p>
+    <div class="page">
+      \n\n
+      <p>
+        Importance Sampling:Moves to lower energies are ALWAYS accepted.Moves up are accepted sometimes...high EP(i to j)i1.0low Ej-ve+vemicrostatesDEPutting these into the detailed balance condition:This generates a sequence of Boltzmann distributed microstates.Estimate observables like this:energy
+      </p>\n
+    </div>
+    <p>
+      \n
+    </p>
+    <div class="page">
+      \n\n
+      <p>
+        Limitations:Finite system sizeTrying to predict the behaviour of an infinite system,using only a few hundred/thousand particles.One should always examine a range of system sizes.Can then estimate the effects of finite size.Finite Simulation TimeTrying to predict the equilibrium behaviour of real systems,i.e. minutes or hours or even months of real time.Simulation can only usually provide a few microseconds.I'm interested in structural phase transitions,using importance sampling I would have to wait decades to observe an fcc to hcp transition.Is Monte Carlo finally facing it's Waterloo.
+      </p>\n
+    </div>
+    <p>
+      \n
+    </p>
+    <div class="page">
+      \n
+      <p>
+        Beating The SystemEg The Double Disco Dancing Queen:
+      </p>\n
+    </div>
+    <p>
+      \n
+    </p>
+    <div class="page">
+      \n\n
+      <p>
+        What I do:Compare structures, Eg...ABABAB versus ABCABC(sadly, not ABBAABBA)
+      </p>\n
+    </div>
+    <p>
+      \n
+    </p>
+    <div class="page">
+      \n
+      <p>
+        The pun possibilities:I ve crossed the stream~~~~~~~~~~~~~~~~~~~~~The winner takes it all, the loser s standing small/has to fall.~nothing else to say, no other ace to play.ABBA were: Bj:orn, Benny, Agnetha and Anni-Frid Money, money, money it must be funny in a rich (Frida). Swedish.man s world. always sunny. Aha--aaah ah ahhh all the things I had I could do.Songs:S.O.S. it use to be so nice, it used to be so Dancing Queen - Having the time of your life, good.looking out for place to go, when your gone, how can i even try to go on.hiiiiiigh, watch that scene,Chiquitita you and I know.Knowing me, knowing you ah-aaa FernandoThere is nothing we can do. can you hear the drums, fernandoBreaking up is never easy I know, but I have to go.if I had to do the same again, i would my friendTake a chance on me, Voulez Vousif you change your mind I ll be first in line, honey I m still freeGimme! Gimme! Gimme! (a man after midnight)if you got no place to go, when you feeling downIf you put me to the test, if you let me try.Does your mother know that your out. So much that I want to doi could dance with you honey, if you think that it s It s magicfunny.but I can t let go.Babababa-ba bababa-ba-ba One of usMamma mia - here i go again.whats the The name of the game?Lay all you love on meso i say Thank you for the music, the songs i m don t go wasting your emotionsinging, the joy their bringing. for giving it to me.Super TrouperWaterloo - My my, at Waterloo Napolean did And somewhere in the crowd there s Sue.surrender. Yeah yeah.couldn t escape if I wanted to.I have a dream, a fantasy, to help me through i feel like i win when i lose.realityfinally facing my waterloo.If you ve see the wonder of the fairytale.I believe in Angels.
+      </p>\n
+    </div>
+    <p>
+      \n\n\n
+    </p>
+  </body>
+</html>

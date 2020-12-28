@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+if [ -z $1 ] 
+then
+    echo 'Usage:'
+    echo
+    echo '   jmxclient <ObjectType>'
+    echo '          -- list operations on <ObjectType>'
+    echo '   jmxclient <ObjectType> <op1=param1,param2...>'
+    echo '          - - invoke op1 on <ObjectType>'
+    echo
+    echo '<ObjectType> is NOT a full ObjectName; it''s just the "type" part.'
+    echo 'Eg, an <ObjectType> of CrawlJobManager would match the ObjectName'
+    echo 'org.archive.crawler:name=CrawlJobManager,type=CrawlJobManager'
+    echo
+    echo 'Note that only the first matching ObjectName is used.  Don''t use'
+    echo 'this tool if you have more than one job running in the same JVM.'
+    echo 
+    echo 'To use this script, $HERITRIX_HOME must be set.'
+    exit
+fi
+
+if [ -z $HERITRIX_HOME ] 
+then
+    echo 'No $HERITRIX_HOME, aborting.'
+    exit
+fi
+
+cd $HERITRIX_HOME
+if [ ! -s conf/jmxremote.password ]
+then
+    echo 'No $HERITRIX_HOME/conf/jmxremote.password, aborting.'
+    exit
+fi
+
+PASSWORD=`grep controlRole conf/jmxremote.password | cut -d= -f2`
+if [ -z $PASSWORD ]
+then
+    echo 'jmxremote.password has no password listed for controlRole, aborting.'
+    exit
+fi
+
+CMD='java -jar bin/cmdline-jmxclient-0.10.5.jar'
+CMD="$CMD controlRole:$PASSWORD localhost:8849"
+export OBJECTNAME=`($CMD) 3>&1 1>&2 2>&3 | grep $1`
+
+shift
+CMD="$CMD $OBJECTNAME $@"
+
+$CMD

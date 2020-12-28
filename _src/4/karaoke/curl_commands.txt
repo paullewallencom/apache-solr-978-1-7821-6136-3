@@ -1,0 +1,18 @@
+# from the directory ./examples/3/karaoke/
+
+# basic index
+curl 'http://localhost:8983/solr/karaoke/update/extract?fmap.content=text' -F "file=@angeleyes.kar"
+
+curl http://localhost:8983/solr/karaoke/update?commit=true
+ or
+curl http://localhost:8983/solr/karaoke/update -H "Content-Type: text/xml" --data-binary '<commit waitFlush="false"/>'
+
+# index and commit
+curl 'http://localhost:8983/solr/karaoke/update/extract?fmap.content=text&commit=true'  -F "file=@angeleyes.kar"
+
+# index a PDF document
+curl 'http://localhost:8983/solr/karaoke/update/extract?fmap.content=text&commit=true'  -F "file=@mccm.pdf"
+
+# extract and view only data
+curl 'http://localhost:8983/solr/karaoke/update/extract?fmap.content=text&extractOnly=true&wt=json&indent=true'  -F "file=@mccm.pdf"
+

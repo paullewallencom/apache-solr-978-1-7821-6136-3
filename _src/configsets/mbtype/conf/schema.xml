@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<schema name="musicbrainz" version="1.5">
+
+  <fields>
+
+    <field name="id" type="string" required="true" /><!-- Artist:11650 -->
+
+    <field name="type" type="string" required="true" /><!-- Artist | Release | Label -->
+
+    <field name="indexedAt" type="tdate" default="NOW/SECOND" />
+
+    <!-- artist -->
+
+    
+    <!-- This field is needed for doing Solr joins, and is populated
+         via conf/update-script.js -->
+    <field name="a_id" type="long" stored="true" indexed="true"/>
+    <field name="a_name" type="title" /><!-- The Smashing Pumpkins -->
+    <field name="a_name_sort" type="string" stored="false" /><!-- Smashing Pumpkins, The -->
+    <field name="a_alias" type="title" stored="false" multiValued="true" />   
+    <field name="a_type" type="string" /><!-- group | person -->
+    <field name="a_begin_date" type="tdate" />
+    <field name="a_end_date" type="tdate" />
+    <field name="a_member_name" type="title" multiValued="true" /><!-- Billy Corgan -->
+    <field name="a_member_id" type="long" multiValued="true" /><!-- 102693 -->
+    <field name="a_release_date_latest" type="tdate" />
+
+    <!--note: for spell correction; populated via copyFields -->
+    <field name="a_spell" type="textSpell" stored="false" multiValued="true" omitTermFreqAndPositions="true" />
+
+    <!-- for sounds-like; populated via copyFields -->
+    <field name="a_phonetic" type="phonetic" stored="false" multiValued="true" />
+
+    <!-- substring matches -->
+    <field name="a_nGram" type="nGram" stored="false" multiValued="true" />
+    <field name="a_rev" type="text_rev" stored="false" multiValued="true" />
+
+    <!-- release -->
+    
+    <!-- This field is needed for doing Solr joins, and is populated
+         via conf/update-script.js -->
+    <field name="r_id" type="long" stored="true" indexed="true"/>
+    <field name="r_name" type="title" /><!-- Siamese Dream -->
+    <field name="r_name_sort" type="string" stored="false"/><!-- Siamese Dream -->
+    <field name="r_name_facetLetter" type="bucketFirstLetter" stored="false" />
+
+    <field name="r_a_name" type="title" /><!-- The Smashing Pumpkins -->
+    <field name="r_a_id" type="long" /><!-- 11650 -->
+    <!-- Attributes 1-11: Album | Single | EP |... etc. -->
+    <!-- Attributes 100+: Official | Bootleg | Promotional -->
+    <field name="r_attributes" type="int" indexed="false" multiValued="true" /><!-- ex: 0, 1, 100 -->
+    <field name="r_type" type="rType" stored="false" multiValued="true"/><!-- Album | Single | EP |... etc. -->
+    <field name="r_official" type="rOfficial" stored="false" multiValued="true" /><!-- Official | Bootleg | Promotional -->
+     
+    <field name="r_lang" type="string" indexed="false" /> <!-- eng / latn -->
+    <field name="r_tracks" type="int" indexed="false" />
+    <field name="r_event_country" type="string" multiValued="true" /><!-- us -->
+    <field name="r_event_date" type="tdate" multiValued="true" />
+    <field name="r_event_date_earliest" type="tdate" multiValued="false" />
+
+    <!-- label (illustrative-only; not used)-->
+
+    <field name="l_name" type="title" /><!-- Virgin Records America -->
+    <field name="l_name_sort" type="string" stored="false" />
+    <field name="l_type" type="string" /><!-- Distributor, Orig. Prod., Production -->
+    <field name="l_begin_date" type="tdate" />
+    <field name="l_end_date" type="tdate" />
+
+    <!-- track -->
+    
+    <!-- This field is needed for doing Solr joins, and is populated
+         via conf/update-script.js -->
+    <field name="t_id" type="long" stored="true" indexed="true"/>
+    <field name="t_name" type="title" /><!-- Cherub Rock -->
+    <field name="t_duration" type="tint"/><!-- 298 (seconds) -->
+    <field name="t_num" type="int" indexed="false" /><!-- 1 -->
+    <field name="t_trm_lookups" type="tint" /><!-- 250 -->
+    <field name="t_a_id" type="long" /><!-- 11650 -->
+    <field name="t_a_name" type="title" /><!-- The Smashing Pumpkins -->
+    <field name="t_r_id" type="long" /><!-- 22429 -->
+    <field name="t_r_name" type="title" /><!-- Siamese Dream -->
+    <field name="t_r_attributes" type="int" multiValued="true" /><!-- album | single | compilation -->
+    <field name="t_r_tracks" type="tint" /><!-- 13 -->
+    
+    <!-- TODO -->
+    <field name="word" type="ignored" />
+    <field name="includes" type="ignored" />
+
+  <!-- If you remove this field, you must _also_ disable the update log in solrconfig.xml
+      or Solr won't start. _version_ and update log are required for SolrCloud
+   --> 
+   <field name="_version_" type="long" indexed="true" stored="true"/>
+   
+  </fields>
+
+  <!-- Field to use to determine and enforce document uniqueness. 
+    Unless this field is marked with required="false", it will be a required field
+   -->
+  <uniqueKey>id</uniqueKey>
+
+  <!-- field for the QueryParser to use when an explicit field name is absent -->
+  <defaultSearchField>a_name</defaultSearchField>
+
+  <!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
+  <!-- <solrQueryParser defaultOperator="OR"/> -->
+
+  <!-- copyField commands copy one field to another at the time a document
+   is added to the index.  It's used either to index the same field differently,
+   or to add multiple fields to the same field for easier/faster searching.  -->
+  <copyField source="a_name" dest="a_spell" />
+  <copyField source="a_alias" dest="a_spell" />
+  <copyField source="a_name" dest="a_phonetic" />
+  <copyField source="a_name" dest="a_nGram" />
+  <copyField source="a_name" dest="a_rev" />
+
+  <copyField source="r_name" dest="r_name_sort" />
+  <copyField source="r_name" dest="r_name_facetLetter" />
+  <copyField source="r_attributes" dest="r_type" />
+  <copyField source="r_attributes" dest="r_official" />
+ 
+  <!-- See Chapter 6, Relevancy
+  http://lucene.apache.org/solr/4_0_0/solr-core/org/apache/solr/search/similarities/BM25SimilarityFactory.html
+  <similarity class="solr.BM25SimilarityFactory">
+    <float name="k1">1.2</float>
+    <float name="b">0.75</float>
+  </similarity>
+  -->
+  
+  <types>
+
+    <fieldType name="string" class="solr.StrField" sortMissingLast="true"/>
+
+    <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
+
+    <!--
+    Default numeric field types. For faster range queries, consider the tint/tfloat/tlong/tdouble types.
+    -->
+    <fieldType name="int" class="solr.TrieIntField" precisionStep="0" positionIncrementGap="0"/>
+    <fieldType name="float" class="solr.TrieFloatField" precisionStep="0" positionIncrementGap="0"/>
+    <fieldType name="long" class="solr.TrieLongField" precisionStep="0" positionIncrementGap="0"/>
+    <fieldType name="double" class="solr.TrieDoubleField" precisionStep="0" positionIncrementGap="0"/>
+    <fieldType name="date" class="solr.TrieDateField" precisionStep="0" positionIncrementGap="0"/>
+
+    <fieldType name="tint" class="solr.TrieIntField" precisionStep="8" positionIncrementGap="0"/>
+    <fieldType name="tfloat" class="solr.TrieFloatField" precisionStep="8" positionIncrementGap="0"/>
+    <fieldType name="tlong" class="solr.TrieLongField" precisionStep="8" positionIncrementGap="0"/>
+    <fieldType name="tdouble" class="solr.TrieDoubleField" precisionStep="8" positionIncrementGap="0"/>
+    <fieldType name="tdate" class="solr.TrieDateField" precisionStep="6" positionIncrementGap="0"/>
+    
+    <!-- since fields of this type are by default not stored or indexed, any data added to 
+    them will be ignored outright 
+    --> 
+    <fieldtype name="ignored" stored="false" indexed="false" class="solr.StrField" />
+    
+    <!-- (From solr's example schema, "text_en_splitting", copied for reference.)
+     A text field with defaults appropriate for English, plus
+     aggressive word-splitting and autophrase features enabled.
+     This field is just like text_en, except it adds
+     WordDelimiterFilter to enable splitting and matching of
+     words on case-change, alpha numeric boundaries, and
+     non-alphanumeric chars.  This means certain compound word
+     cases will work, for example query "wi fi" will match
+     document "WiFi" or "wi-fi".
+    -->
+    <fieldType name="text_splitting" class="solr.TextField" positionIncrementGap="100" autoGeneratePhraseQueries="true">
+      <analyzer type="index">
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"  />
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0" splitOnCaseChange="1"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
+        <filter class="solr.PorterStemFilterFactory"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
+        <filter class="solr.PorterStemFilterFactory"/>
+      </analyzer>
+    </fieldType>
+
+    <!-- MusicBrainz names for things -->
+    <fieldType name="title" class="solr.TextField" positionIncrementGap="100">
+      <analyzer>
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <!-- since lots of proper nouns in titles, only do minimal (i.e. plural word) stemming -->
+        <filter class="solr.EnglishMinimalStemFilterFactory"/>
+      </analyzer>
+    </fieldType>
+
+    <!-- To increase phrase query performance and relevancy in titles, use either of the title_shingle or
+    title_commonGrams instead. We've commented out the trailing stop filter because it isn't a good idea for the
+    MusicBrainz data in titles; however if you have large text fields then this saves space & storage. -->
+    <fieldType name="title_shingle" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.EnglishMinimalStemFilterFactory"/>
+        <filter class="solr.ShingleFilterFactory" maxShingleSize="2" outputUnigrams="true"/>
+        <!-- <filter class="solr.StopFilterFactory" words="stopwords.txt" enablePositionIncrements="true" /> -->
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.EnglishMinimalStemFilterFactory"/>
+        <!-- ! Notice the query side is configured differently -->
+        <filter class="solr.ShingleFilterFactory" maxShingleSize="2" outputUnigrams="false" outputUnigramsIfNoShingles="true"/>
+        <!-- <filter class="solr.StopFilterFactory" words="stopwords.txt" enablePositionIncrements="true" /> -->
+      </analyzer>
+    </fieldType>
+
+    <fieldType name="title_commonGrams" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.EnglishMinimalStemFilterFactory"/>
+        <filter class="solr.CommonGramsFilterFactory" words="commongrams.txt" ignoreCase="true"/>
+        <!-- <filter class="solr.StopFilterFactory" words="stopwords.txt" enablePositionIncrements="true" /> -->
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.EnglishMinimalStemFilterFactory"/>
+        <!-- ! Notice the filter factory is different -->
+        <filter class="solr.CommonGramsQueryFilterFactory" words="commongrams.txt" ignoreCase="true"/>
+        <!-- <filter class="solr.StopFilterFactory" words="stopwords.txt" enablePositionIncrements="true" /> -->
+      </analyzer>
+    </fieldType>
+
+    <fieldType name="textSpell" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
+        <filter class="solr.StandardFilterFactory"/>
+        <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
+        <filter class="solr.StandardFilterFactory"/>
+        <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+      </analyzer>
+    </fieldType>
+
+    <!-- for phonetic (sounds-like) indexing -->
+    <!-- BeiderMorse is used as its best for names -->
+    <fieldType name="phonetic" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <!-- ... potentially others ... -->
+        <filter class="solr.BeiderMorseFilterFactory" ruleType="APPROX"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.BeiderMorseFilterFactory" ruleType="EXACT"/>
+      </analyzer>
+    </fieldType>
+
+    <fieldType name="nGram" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <!-- potentially word delimiter, synonym filter, stop words, NOT stemming -->
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.NGramFilterFactory" minGramSize="2" maxGramSize="15"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <!-- potentially word delimiter, synonym filter, stop words, NOT stemming -->
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+    </fieldType>
+
+    <!-- A general unstemmed text field that indexes tokens normally and also
+    reversed (via ReversedWildcardFilterFactory), to enable more efficient 
+    leading wildcard queries. -->
+    <fieldType name="text_rev" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.ReversedWildcardFilterFactory" withOriginal="true" maxPosAsterisk="3" maxPosQuestion="2" maxFractionAsterisk="0.33"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+    </fieldType>
+
+    <fieldType name="rType" class="solr.TextField" sortMissingLast="true" omitNorms="true">
+      <analyzer>
+        <tokenizer class="solr.KeywordTokenizerFactory"/>
+        <filter class="solr.PatternReplaceFilterFactory"
+          pattern="^(0|1\d\d)$" replacement="" replace="first" />
+          <filter class="solr.LengthFilterFactory" min="1" max="100" />
+          <filter class="solr.SynonymFilterFactory" synonyms="mb_attributes.txt" ignoreCase="false" expand="false"/>
+      </analyzer>
+    </fieldType>
+
+    <fieldType name="rOfficial" class="solr.TextField" sortMissingLast="true" omitNorms="true">
+      <analyzer>
+        <tokenizer class="solr.KeywordTokenizerFactory"/>
+        <filter class="solr.PatternReplaceFilterFactory"
+          pattern="^(0|\d\d?)$" replacement="" replace="first" />
+        <filter class="solr.LengthFilterFactory" min="1" max="100" />
+        <filter class="solr.SynonymFilterFactory" synonyms="mb_attributes.txt" ignoreCase="false" expand="false"/>
+      </analyzer>
+    </fieldType>
+
+    <fieldType name="bucketFirstLetter" class="solr.TextField" sortMissingLast="true" omitNorms="true">
+      <analyzer type="index">
+        <tokenizer class="solr.PatternTokenizerFactory" pattern="^([a-zA-Z]).*" group="1" />
+        <filter class="solr.SynonymFilterFactory" synonyms="mb_letterBuckets.txt" ignoreCase="true" expand="false"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.KeywordTokenizerFactory"/>
+      </analyzer>
+    </fieldType>
+
+  </types>
+
+</schema>

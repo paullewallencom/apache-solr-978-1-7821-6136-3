@@ -1,0 +1,3 @@
+http://localhost:8983/solr/admin/cores?action=SWAP&core=mbreleases&other=mbtracks
+
+Go to http://localhost:8983/solr/mbtracks/admin/ and verify that Solr Home is SolrHome=cores/mbreleases/ 

@@ -1,0 +1,19 @@
+# from: http://bugs.musicbrainz.org/browser/mb_server/trunk/cgi-bin/MusicBrainz/Server/Release.pm#L48
+#note: non-album track seems bogus; almost everything has it
+0=>Non-Album\ Track
+1=>Album
+2=>Single
+3=>EP
+4=>Compilation
+5=>Soundtrack
+6=>Spokenword
+7=>Interview
+8=>Audiobook
+9=>Live
+10=>Remix
+11=>Other
+
+100=>Official
+101=>Promotion
+102=>Bootleg
+103=>Pseudo-Release

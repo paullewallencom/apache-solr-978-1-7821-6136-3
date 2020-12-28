@@ -1,0 +1,13 @@
+# These CURL commands are from the HTTP caching section in Chapter 10.
+
+# command to see caching headers
+curl -v "http://localhost:8983/solr/mbartists/mb_artists?q=Smashing+Pumpkins"
+
+# command to obey caching rules.  -z parameter should be a time equal or newer then that returned above as the "Last-Modified" time.
+curl -v -z "Fri, 06 May 2011 14:12:18 GMT" "http://localhost:8983/solr/mbartists/mb_artists?q=Smashing+Pumpkins"
+
+# command to index a new fake artist.
+curl 'http://localhost:8983/solr/mbartists/update?commit=true' -H "Content-Type: text/xml" --data-binary '<add><doc><field name="a_name">The Eric Band</field><field name="id">Fake:99999</field><field name="type">Artist</field></doc></add>'
+
+# command that demonstrates that the eTag has changed after the update operation above.
+curl -v -z "Fri, 06 May 2011 14:12:18 GMT" http://localhost:8983/solr/mbartists/select/?q=Smashing+Pumpkins                                   

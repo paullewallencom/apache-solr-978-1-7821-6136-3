@@ -1,0 +1,6 @@
+#set($doc = $response.results.get(0))
+#set($id = $doc.getFieldValue("id"))
+<div>ID: $id</div>
+<div> Name: #field('a_name')</div>
+
+

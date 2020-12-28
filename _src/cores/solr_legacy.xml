@@ -1,0 +1,45 @@
+<!--
+  This is an example of what a pre Solr core discovery solr.xml looks like, and for those of you
+  already using Solr will look more familiar.   It is included to illustrate the differences with
+  the modern solr.xml format.
+-->
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<solr persistent="false" sharedLib="lib">
+
+  <cores adminPath="/admin/cores" shareSchema="true">
+
+    <!--
+      Here we use property substitution in solrconfig.xml to disable some request handlers.
+    
+      WARNING: use of the <property ... /> feature doesn't work from Solr 4.5 onwards; see
+      SOLR-5398.  The way to do it since Solr 4.5 is to use the new-style solr.xml which
+      uses a core discovery mechanism by looking for core.properties files.  That's where
+      you can put custom properties.
+    -->
+
+    <core name="mbtracks" instanceDir="mbtype" dataDir="${solr.data.dir:../../cores_data}/mbtracks">
+      <property name="tracks" value="true" />
+    </core>
+    <core name="mbartists" instanceDir="mbtype" dataDir="${solr.data.dir:../../cores_data}/mbartists">
+      <property name="artists" value="true" />
+    </core>
+    <core name="mbreleases" instanceDir="mbtype" dataDir="${solr.data.dir:../../cores_data}/mbreleases">
+      <property name="releases" value="true" />
+    </core>
+    
+    <!-- See the Integration chapter; Heritrix / SolrJ examples -->
+    <core name="crawler" instanceDir="crawler" dataDir="${solr.data.dir:../../cores_data}/crawler" loadOnStartup="false" />
+    
+    <!-- 
+      which query configuration to include via XInclude
+      values are solrconfig-query-nocache.xml, solrconfig-query-default.xml, solrconfig-query-bigcache.xml 
+    -->
+    <core name="karaoke" instanceDir="karaoke" dataDir="${solr.data.dir:../../cores_data}/karaoke">
+      <property name="karaoke.xinclude.query" value="solrconfig-query-nocache.xml"/>
+    </core>       
+
+    <core name="nutch" instanceDir="nutch" dataDir="${solr.data.dir:../../cores_data}/nutch" />
+
+  </cores>
+</solr>

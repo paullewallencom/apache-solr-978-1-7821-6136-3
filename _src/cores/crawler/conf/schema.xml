@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<schema name="crawler" version="1.5">>
+
+	<fields>
+		<field name="url" type="string" />
+		<field name="mimeType" type="string" />
+		<field name="host" type="string" />
+		<field name="path" type="string" />
+		<field name="docText" type="html-text"/>
+		<field name="docTextShingle" type="html-shingle" stored="false" />
+	</fields>
+	
+	<uniqueKey>url</uniqueKey>
+  
+	<copyField source="docText" dest="docTextShingle" />
+  
+	<types>
+		<fieldType name="string" class="solr.StrField" sortMissingLast="true" />
+    
+		<fieldType name="html-text" class="solr.TextField" positionIncrementGap="100">
+			<analyzer type="index">
+				<charFilter class="solr.HTMLStripCharFilterFactory"/>
+				<tokenizer class="solr.StandardTokenizerFactory"/>
+				<filter class="solr.StandardFilterFactory"/>
+				<filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" enablePositionIncrements="true"/>
+				<filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+				<filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
+				<filter class="solr.PorterStemFilterFactory"/>
+				<filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+			</analyzer>
+			<analyzer type="query">
+				<tokenizer class="solr.StandardTokenizerFactory"/>
+				<filter class="solr.StandardFilterFactory"/>
+				<filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
+				<filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
+				<filter class="solr.PorterStemFilterFactory"/>
+				<filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+			</analyzer>
+		</fieldType>
+		<fieldType name="html-shingle" class="solr.TextField" positionIncrementGap="100" stored="false">
+			<analyzer type="index">
+				<charFilter class="solr.HTMLStripCharFilterFactory"/>
+				<tokenizer class="solr.StandardTokenizerFactory"/>
+				<filter class="solr.StandardFilterFactory"/>
+				<filter class="solr.LowerCaseFilterFactory"/>
+				<filter class="solr.ShingleFilterFactory" maxShingleSize="2" outputUnigrams="true"/>
+			</analyzer>
+			<analyzer type="query">
+				<tokenizer class="solr.StandardTokenizerFactory"/>
+				<filter class="solr.StandardFilterFactory"/>
+				<filter class="solr.LowerCaseFilterFactory"/>
+				<filter class="solr.ShingleFilterFactory" maxShingleSize="2" outputUnigrams="false" outputUnigramsIfNoShingles="true"/>
+			</analyzer>
+		</fieldType>
+	</types>
+
+</schema>

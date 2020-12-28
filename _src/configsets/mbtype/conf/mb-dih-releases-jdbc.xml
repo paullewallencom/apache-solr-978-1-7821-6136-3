@@ -1,0 +1,35 @@
+<dataConfig>
+   <dataSource name="jdbc" driver="org.postgresql.Driver" url="jdbc:postgresql://localhost/musicbrainz_db" user="musicbrainz"
+       batchSize="1000" readOnly="true" autoCommit="false"
+		 transactionIsolation="TRANSACTION_READ_COMMITTED" holdability="CLOSE_CURSORS_AT_COMMIT"
+ />
+   <document>
+      <entity name="release" dataSource="jdbc" pk="id" query="
+               select 
+            r.id as id,
+            r.name as r_name,
+            a.id as r_a_id, a.name as r_a_name,
+            array_to_string(r.attributes,' ') as r_attributes, albummeta.tracks as r_tracks,
+            language.name as r_lang,
+            array_to_string(
+              array(select country.isocode from release re inner join country on re.country = country.id where re.album = r.id order by releasedate, re.id)
+              ,' ') as r_event_country,
+            array_to_string(
+              array(select releasedate from release re where re.album = r.id order by releasedate, re.id)
+              ,' ') as r_event_date,
+              albummeta.firstreleasedate as r_event_date_earliest
+            from album r inner join albummeta on r.id = albummeta.id
+            left join language on r.language = language.id
+            left join artist a on r.artist = a.id
+            "
+             transformer="RegexTransformer,DateFormatTransformer,TemplateTransformer"   >
+             <field column = "id" template="Release:${release.id}" />
+             <field column = "type" template="Release" />
+             <field column = "r_attributes" splitBy=" " />
+             <field column = "r_event_country" splitBy=" " />
+             <field column = "r_event_date" splitBy=" " dateTimeFormat="yyyy-MM-dd" />
+             <field column = "r_event_date_earliest" dateTimeFormat="yyyy-MM-dd" />
+        </entity>
+    </document>
+</dataConfig>
+

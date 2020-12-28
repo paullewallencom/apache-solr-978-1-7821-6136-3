@@ -1,0 +1,3 @@
+#foreach($t in $response.response.terms.a_spell)
+$t.key
+#end

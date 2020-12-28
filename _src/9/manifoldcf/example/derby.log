@@ -1,0 +1,11 @@
+----------------------------------------------------------------
+Wed Jul 27 00:01:32 EDT 2011:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.7.1.1 - (1087599M): instance a816c00e-0131-69c1-2bc9-00000425b198 
+on database directory /Users/epugh/Documents/projects/solrbook/trunk/examples/9/manifoldcf/example/dbname  with class loader sun.misc.Launcher$AppClassLoader@37b90b39 
+Loaded from file:/Users/epugh/Documents/projects/solrbook/trunk/examples/9/manifoldcf/example/lib/derby.jar
+java.vendor=Apple Inc.
+java.runtime.version=1.6.0_26-b03-384-10M3425
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Wed Jul 27 16:03:52 EDT 2011:
+Shutting down instance a816c00e-0131-69c1-2bc9-00000425b198 on database directory /Users/epugh/Documents/projects/solrbook/trunk/examples/9/manifoldcf/example/dbname with class loader sun.misc.Launcher$AppClassLoader@37b90b39 

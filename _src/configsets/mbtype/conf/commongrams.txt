@@ -1,0 +1,44 @@
+#This file is for use with a CommonGrams filter.
+#If a stemmer or other manipulating filter comes beforehand, then this
+#  list needs to account for it. For example, if you are using EnglishMinimalStemFilterFactory,
+#  then a plural word here wouldn't ever be found in the incoming token stream.
+
+#TODO: add here any words that appear often
+
+#Standard english stop words taken from Lucene's StopAnalyzer
+a
+an
+and
+are
+as
+at
+be
+but
+by
+for
+if
+in
+into
+is
+it
+no
+not
+of
+on
+or
+s
+such
+t
+that
+the
+their
+then
+there
+these
+they
+this
+to
+was
+will
+with
+

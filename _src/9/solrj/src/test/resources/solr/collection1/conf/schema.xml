@@ -1,0 +1,9 @@
+<!-- minimal schema just for some testing -->
+<schema name="minimal" version="1.5">
+  <fields>
+    <dynamicField name="*" type="string" indexed="true" stored="true" />
+  </fields>
+  <types>
+    <fieldType name="string" class="solr.StrField"/>
+  </types>
+</schema>

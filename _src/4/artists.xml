@@ -1,0 +1,15 @@
+<add overwrite="true">
+  <doc boost="2.0">
+    <field name="id">Artist:11652</field>
+    <field name="type">Artist</field>
+    <field name="a_name" boost="0.5">The Smashing Pumpkins</field>
+    <!-- the date/time syntax MUST look just like this -->
+    <field name="a_begin_date">2007-12-31T09:40:00Z</field>
+  </doc>
+  <doc>
+    <field name="id">Artist:11653</field>
+    <field name="type">Artist</field>
+    <field name="a_begin_date">2007-12-31T09:40:00Z</field>
+  </doc>
+  <!-- more doc elements here as needed -->
+</add>

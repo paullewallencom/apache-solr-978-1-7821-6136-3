@@ -1,0 +1,55 @@
+<script type="text/javascript">
+$(function() {
+
+	function formatForDisplay(doc) {
+		return doc.artist.name;
+	}
+
+	$("#artist_name").autocomplete( '/artists.json?callback=?', {
+		dataType: "jsonp",
+		width: 300,
+		minChars: 2,
+		parse: function(data) {
+		  $("#artist_id").get(0).value = "";  // clear out hidden field
+			return $.map(data, function(doc) {
+				return {
+					data: doc,
+					value: doc.artist.id.toString(),
+					result: doc.artist.name
+				}
+			});
+		},
+		formatItem: function(doc) {
+			return formatForDisplay(doc);
+		}
+	}).result(function(e, doc) {
+	  $("#artist_id").get(0).value = doc.artist.id;
+		$("#content").append("<p>selected " + formatForDisplay(doc) + "(" + doc.artist.id + ")" + "</p>");
+	});
+});
+
+</script>
+
+<h1>My Favorite Artists</h1>
+
+
+<table border = 1>
+<%= render(:partial => 'artist', :collection => @myfaves, :spacer_template => 'spacer') %>   
+</table>
+
+<br />
+<%= form_for :artist do |f| %> 
+  <p>
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+    <%= f.hidden_field :id %>
+  </p>
+  <p>
+    <%= f.submit 'Add' %>
+  </p>
+  <p>
+  </p>
+<% end %>
+<p/>
+<hr/>
+<%= link_to 'All Artists', artists_path %>

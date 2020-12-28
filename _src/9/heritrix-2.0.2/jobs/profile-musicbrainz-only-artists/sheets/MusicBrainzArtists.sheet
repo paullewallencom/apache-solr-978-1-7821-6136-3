@@ -1,0 +1,5 @@
+root:metadata:robots-honoring-policy:custom-robots=string, User-agent: * Disallow: /album/ Disallow: /archives/ Disallow: /artist/ Disallow: /artistrel.html Disallow: /bare/ Disallow: /browseartists.html Disallow: /browselabels.html Disallow: /browsevarious.html Disallow: /cdi/ Disallow: /comp/ Disallow: /dhandler Disallow: /edit/ Disallow: /freedb/ Disallow: /google/ Disallow: /label/ Disallow: /login.html Disallow: /logout.html Disallow: /misc/redirects Disallow: /mm-2.1/ Disallow: /mod/ Disallow: /mrtg/ Disallow: /newsearch.html Disallow: /release/ Disallow: /reports/ Disallow: /search Disallow: /search.html Disallow: /showalbum.html Disallow: /showaliases.html Disallow: /showmod.html Disallow: /showpuid.html Disallow: /showtrack.html Disallow: /taglookup.html Disallow: /track/ Disallow: /usage/ Disallow: /user/
+root:metadata:robots-honoring-policy:type=enum, org.archive.modules.net.RobotsHonoringPolicy$Type-CUSTOM
+root:controller:processors:ExtractorCSS:enabled=boolean, false
+root:controller:processors:ExtractorJS:enabled=boolean, false
+root:controller:processors:ExtractorSWF:enabled=boolean, false

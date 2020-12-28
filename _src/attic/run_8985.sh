@@ -1,0 +1,3 @@
+#!/bin/sh
+cd ..
+java -Xms512M -Xmx1024M -Dfile.encoding=UTF8 -Dsolr.solr.home=cores -Dsolr.slave.enable=true -Dsolr.data.dir=../../cores_data/data8985 -Djetty.port=8985 -Djetty.home=solr -Djetty.logs=solr/logs -jar solr/start.jar

@@ -1,0 +1,11 @@
+# Merge populated karaoke core and karaoke_test core into karaoke_test2 core
+
+curl http://localhost:8983/solr/karaoke/update/ -H "Content-Type: text/xml" --data-binary '<commit waitFlush="false"/>'
+
+curl http://localhost:8983/solr/karaoke_test/update/ -H "Content-Type: text/xml" --data-binary '<commit waitFlush="false"/>'
+
+curl 'http://localhost:8983/solr/admin?action=mergeindexes&core=karaoke_test2&indexDir=/Users/epugh/Documents/projects/solrbook/solrbook/trunk/examples/cores_data/karaoke/index&indexDir=/Users/epugh/Documents/projects/solrbook/solrbook/trunk/examples/cores_data/karaoke_test1/index'
+
+
+
+curl http://localhost:8983/solr/karaoke_test2/update/ -H "Content-Type: text/xml" --data-binary '<commit waitFlush="false"/>'

@@ -1,0 +1,13 @@
+
+
+
+
+a_member_name:"Billy Corgan"
+a_member_name:"David Pajo"
+a_begin_date:[1987-11-30T00:00:00Z TO 1990-11-30T00:00:00Z]
+a_release_date_latest:[2003-06-02T00:00:00Z TO 2004-06-02T00:00:00Z]
+a_release_date_latest:[2007-01-31T00:00:00Z TO NOW]
+a_type:group
+a_type:person
+a_name:Monc
+a_name:Alien
